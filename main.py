@@ -35,6 +35,8 @@ while run:
             if event.key == pygame.K_SPACE:
                 stack = []
                 grid = [Cell(col, row, size, thickness) for row in range(rows) for col in range(cols)]
+                grid[0].walls['left'] = False
+                grid[len(grid)-1].walls['right'] = False
                 current_cell = grid[0]
                 current_cell.visited = True
 

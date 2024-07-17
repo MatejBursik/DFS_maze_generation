@@ -12,16 +12,18 @@ class Cell:
             'left' : True,
             'right' : True
         }
-        self.size = size
-        self.thickness = thickness
+        self.size = size # for drawing
+        self.thickness = thickness # for drawing
 
     def draw(self, screen):
         x = self.x * self.size
         y = self.y * self.size
 
+        # draw with a different color if it was already visited
         if self.visited:
             pygame.draw.rect(screen, (0,0,100), (self.x * self.size, self.y * self.size, self.size, self.size))
 
+        # draw walls
         if self.walls['up']:
             pygame.draw.line(screen, (0,0,0), (x, y), (x + self.size, y), self.thickness)
         if self.walls['down']:
@@ -32,20 +34,23 @@ class Cell:
             pygame.draw.line(screen, (0,0,0), (x + self.size - self.thickness, y), (x + self.size - self.thickness, y + self.size), self.thickness)
 
     def draw_current_cell(self, screen):
+        # draw with a different color if it is on top of the stack
         pygame.draw.rect(screen, (255,0,0), (self.x * self.size + self.thickness, self.y * self.size + self.thickness, self.size - self.thickness, self.size - self.thickness))
     
-    def check(self, x, y, _grid, _cr): # _cr = (cols, rows)
+    # get Cell from a 1d stack based on coordinates from 2d grid
+    def get(self, x, y, _grid, _cr): # _cr = (cols, rows)
         find_index = lambda x, y: x + y * _cr[0]
         if x < 0 or x > _cr[0] - 1 or y < 0 or y > _cr[1] - 1:
             return False
         return _grid[find_index(x, y)]
     
+    # check is the neighboring Cells were visited
     def check_neighbors(self, _grid, _cr): # _cr = (cols, rows)
         neighbors = []
-        up = self.check(self.x, self.y - 1, _grid, _cr)
-        down = self.check(self.x, self.y + 1, _grid, _cr)
-        left = self.check(self.x - 1, self.y, _grid, _cr)
-        right = self.check(self.x + 1, self.y, _grid, _cr)
+        up = self.get(self.x, self.y - 1, _grid, _cr)
+        down = self.get(self.x, self.y + 1, _grid, _cr)
+        left = self.get(self.x - 1, self.y, _grid, _cr)
+        right = self.get(self.x + 1, self.y, _grid, _cr)
 
         if up and not up.visited:
             neighbors.append(up)
@@ -56,10 +61,12 @@ class Cell:
         if right and not right.visited:
             neighbors.append(right)
         
+        # choose one not visited neighbor randomly
         if neighbors:
             return choice(neighbors)
         return False
 
+# connect current and next Cells by updating the walls
 def remove_walls(current, next):
     dx = current.x - next.x
     if dx == 1:
@@ -68,6 +75,7 @@ def remove_walls(current, next):
     elif dx == -1:
         current.walls['right'] = False
         next.walls['left'] = False
+        
     dy = current.y - next.y
     if dy == 1:
         current.walls['up'] = False
