@@ -1,5 +1,5 @@
 # DFS (Depth First Search) maze generation
-This repository covers a process of generating a maze using random DFS. The process involves treating the maze as a grid of cells and carving out paths between cells in a randomized manner which creates the maze has a single connected path with no cycles.
+This repository covers a process of generating a maze using randomized DFS. The process involves treating the maze as a grid of cells and carving out paths between cells in a randomized manner which creates a maze that has a single connected path with no loops.
 
 ## Process explanation
 The maze generation uses randomized DFS as the algorithm to create the maze. The algorithm is placed in a basic Pygame game loop for visualization and re-generation of the maze if it is not suitable. Lastly, after the application window is exited, I use CV2 the make and save an image out of the maze.
